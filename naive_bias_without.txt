@@ -1,0 +1,46 @@
+import math
+import pandas as pd
+from fractions import Fraction
+data=pd.read_csv('PlayTennis.csv')
+Outlook=data.groupby(['Outlook','Play']).size().unstack(fill_value=0)
+Temperature=data.groupby(['Temperature','Play']).size().unstack(fill_value=0)
+Humidity=data.groupby(['Humidity','Play']).size().unstack(fill_value=0)
+Wind=data.groupby(['Wind','Play']).size().unstack(fill_value=0)
+
+total_no = Outlook['No'].sum()
+total_yes = Outlook['Yes'].sum()
+Outlook['No']=Outlook['No']/total_no 
+Outlook['Yes']=Outlook['Yes']/total_yes
+
+total_no = Temperature['No'].sum()
+total_yes = Temperature['Yes'].sum()
+Temperature['No']=Temperature['No']/total_no 
+Temperature['Yes']=Temperature['Yes']/total_yes
+
+total_no = Humidity['No'].sum()
+total_yes = Humidity['Yes'].sum()
+Humidity['No']=Humidity['No']/total_no 
+Humidity['Yes']=Humidity['Yes']/total_yes
+
+total_no = Wind['No'].sum()
+total_yes = Wind['Yes'].sum()
+Wind['No']=Wind['No']/total_no 
+Wind['Yes']=Wind['Yes']/total_yes
+
+total= data['Play'].value_counts()
+total['Yes'] =total['Yes']/len(data)
+total['No'] =total['No']/len(data)
+
+
+test=['Sunny','Cool','High','Strong']
+p_yes=Outlook.loc[test[0], 'Yes']*Temperature.loc[test[1], 'Yes']*Humidity.loc[test[2], 'Yes']*Wind.loc[test[3], 'Yes']*total['Yes']
+p_no=Outlook.loc[test[0], 'No']*Temperature.loc[test[1], 'No']*Humidity.loc[test[2], 'No']*Wind.loc[test[3], 'No']*total['No']
+
+while((p_yes+p_no)!=1):
+  p_yes=p_yes/(p_yes+p_no)
+  p_no=p_no/(p_yes+p_no)
+
+if(p_yes>p_no):
+  print("Yes")
+else:
+ print('No')
